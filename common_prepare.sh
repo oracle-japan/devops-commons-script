@@ -1,6 +1,7 @@
 #!/bin/sh
 #Get CompartmentID
-oci iam compartment list | grep compartment-id > compartment-id.txt ; cut -f 2 -d ":" compartment-id.txt | tr -d ' ','"',',' | tee compartment-id-tee.txt &>/dev/null ; compartment_id=`cat ./compartment-id-tee.txt` ; rm -rf ./compartment-id* ; echo ${compartment_id}
+oci iam compartment list --query 'data[0]' | grep compartment-id > compartment-id.txt ; cut -f
+2 -d ":" compartment-id.txt | tr -d ' ','"',',' | tee compartment-id-tee.txt &>/dev/null ; compartment_id=`cat ./compartment-id-tee.txt` ; rm -rf ./compartment-id* ; echo ${compartment_id}
 #Create Dynamic-Group
 oci iam dynamic-group create --name OCI_DevOps_Dynamic_Group --description OCI_DevOps_Dynamic_Group --matching-rule "Any {All {resource.type = 'devopsrepository', resource.compartment.id = '${compartment_id}'},All {resource.type = 'devopsbuildpipeline', resource.compartment.id = '${compartment_id}'},All {resource.type = 'devopsdeploypipeline', resource.compartment.id = '${compartment_id}'}}"
 #Create Policy
